@@ -1,0 +1,32 @@
+$ErrorActionPreference = "Stop"
+
+$Repo = "{{.Repo}}"
+$Binary = "{{.Bin}}"
+$Version = if ($env:VERSION) { $env:VERSION } else { "latest" }
+
+Write-Host "Installing ${Binary} from ${Repo}..."
+
+$OS = "windows"
+$Arch = if ([Environment]::Is64BitOperatingSystem) { "amd64" } else { "386" }
+
+$DownloadUrl = "https://github.com/${Repo}/releases/${Version}/download/${Binary}_${OS}_${Arch}.exe"
+
+# Install to ~\AppData\Local\pave\bin by default
+$InstallDir = if ($env:INSTALL_DIR) { $env:INSTALL_DIR } else { "$env:LOCALAPPDATA\pave\bin" }
+if (!(Test-Path $InstallDir)) {
+    New-Item -ItemType Directory -Force -Path $InstallDir | Out-Null
+}
+
+Write-Host "Downloading from ${DownloadUrl}..."
+$OutFile = "$InstallDir\${Binary}.exe"
+Invoke-WebRequest -Uri $DownloadUrl -OutFile $OutFile
+
+# Add to PATH if not already present
+$CurrentPath = [Environment]::GetEnvironmentVariable("PATH", "User")
+if ($CurrentPath -notlike "*$InstallDir*") {
+    [Environment]::SetEnvironmentVariable("PATH", "$CurrentPath;$InstallDir", "User")
+    Write-Host "Added $InstallDir to PATH"
+}
+
+Write-Host "Successfully installed ${Binary} to ${OutFile}"
+Write-Host "Restart your terminal or run: `$env:Path += ;$InstallDir"

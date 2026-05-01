@@ -1,0 +1,47 @@
+#!/bin/bash
+set -e
+
+REPO="{{.Repo}}"
+BINARY="{{.Bin}}"
+VERSION="${VERSION:-latest}"
+
+echo "Installing ${BINARY} from ${REPO}..."
+
+if [ "$(uname -s)" = "Darwin" ]; then
+    OS="darwin"
+else
+    OS="linux"
+fi
+
+ARCH="$(uname -m)"
+if [ "$ARCH" = "x86_64" ]; then
+    ARCH="amd64"
+elif [ "$ARCH" = "aarch64" ] || [ "$ARCH" = "arm64" ]; then
+    ARCH="arm64"
+fi
+
+DOWNLOAD_URL="https://github.com/${REPO}/releases/${VERSION}/download/${BINARY}_${OS}_${ARCH}"
+
+echo "Downloading from ${DOWNLOAD_URL}..."
+curl -fsSL -o "/tmp/${BINARY}" "${DOWNLOAD_URL}"
+chmod +x "/tmp/${BINARY}"
+
+# Install to ~/.local/bin by default (no sudo required)
+# Fall back to /usr/local/bin if user has write access
+if [ -w "${HOME}/.local/bin" ] || mkdir -p "${HOME}/.local/bin" 2>/dev/null; then
+    INSTALL_DIR="${INSTALL_DIR:-${HOME}/.local/bin}"
+else
+    INSTALL_DIR="${INSTALL_DIR:-/usr/local/bin}"
+fi
+
+mkdir -p "${INSTALL_DIR}"
+mv "/tmp/${BINARY}" "${INSTALL_DIR}/${BINARY}"
+
+echo "Successfully installed ${BINARY} to ${INSTALL_DIR}/${BINARY}"
+
+# Check if install dir is in PATH
+if [[ ":${PATH}:" != *":${INSTALL_DIR}:"* ]]; then
+    echo ""
+    echo "Add this to your shell config (~/.bashrc or ~/.zshrc):"
+    echo "  export PATH=\"${INSTALL_DIR}:\$PATH\""
+fi
