@@ -5,57 +5,61 @@ Stop copying binaries to `/usr/local/bin` or messing with PATH. `pave` symlinks 
 ## Quick install
 
 **Windows:**
-
 ```powershell
 irm https://github.com/aleks-ship-it/pave/releases/latest/download/install.ps1 | iex
 ```
 
 **Linux/macOS:**
-
 ```bash
 curl -fsSL https://github.com/aleks-ship-it/pave/releases/latest/download/install.sh | bash
 ```
 
+## Installing pave with pave
+
+Once you have pave installed, you can see exactly how it works by using it on itself:
+
+**Windows:**
+```powershell
+pave link --name pave --path "$env:LOCALAPPDATA\pave\bin\pave.exe"
+```
+
+**Linux/macOS:**
+```bash
+pave link --name pave --path ~/.local/bin/pave
+```
+
+This is exactly what pave does for any CLI tool — one command and it's globally accessible from any terminal. No PATH editing, no copying files manually.
+
 ## Usage
 
 ### `pave link` — make a CLI globally accessible
-
 ```bash
 pave link --name mycli --path /path/to/mycli
 ```
-
 Flags: `--name` (required), `--path` (required), `--verbose`, `--dry-run`
 
 ### `pave unlink` — remove a linked CLI
-
 ```bash
 pave unlink --name mycli
 ```
-
 Flags: `--name` (required), `--verbose`, `--dry-run`
 
 ### `pave list` — show all linked CLIs
-
 ```bash
 pave list
 ```
-
 Flags: `--verbose`
 
 ### `pave status` — check a specific link
-
 ```bash
 pave status --name mycli
 ```
-
 Flags: `--name`, `--verbose`
 
 ### `pave generate` — create install scripts for your tool
-
 ```bash
 pave generate --name mytool --repo aleks/mytool --bin mytool
 ```
-
 Flags: `--name` (required), `--repo` (required), `--bin` (required), `--out`, `--verbose`, `--dry-run`
 
 ## How it works
@@ -69,7 +73,6 @@ Flags: `--name` (required), `--repo` (required), `--bin` (required), `--out`, `-
 ## Release your own tool
 
 Generate cross-platform install scripts that download from GitHub releases:
-
 ```bash
 pave generate \
   --name mycli \
@@ -77,13 +80,10 @@ pave generate \
   --bin mycli \
   --out ./dist
 ```
-
 This creates `install.sh` (Unix/macOS) and `install.ps1` (Windows) that users can run to install your tool.
 
 ## Built with
-
 [Go](https://golang.org) · [Cobra](https://github.com/spf13/cobra)
 
 ## License
-
 [![MIT License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
