@@ -1,0 +1,17 @@
+# Binaries
+pave
+pave.exe
+
+# GoReleaser output
+dist/
+
+# Go build cache
+*.test
+*.out
+
+# Environment files
+.env
+
+# OS files
+.DS_Store
+Thumbs.db
