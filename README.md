@@ -1,4 +1,5 @@
-# pave — make any CLI tool runnable from anywhere in your terminal
+# pave  
+make any CLI tool runnable from anywhere in your terminal
 
 Stop copying binaries to `/usr/local/bin` or messing with PATH. `pave` symlinks your CLIs into a single directory and manages them for you.
 
